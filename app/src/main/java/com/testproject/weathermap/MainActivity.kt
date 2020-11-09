@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
@@ -14,6 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.IOException
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private lateinit var settings: SharedPreferences
@@ -45,9 +47,16 @@ class MainActivity : AppCompatActivity() {
     private lateinit var icon2day: ImageView
     private lateinit var day2: TextView
 
+    private lateinit var timeNow: Date
+    private lateinit var mainLayout: RelativeLayout
+
+    private var isDay = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        initialize()
+        checkTime()
 
         settings = getSharedPreferences("city", MODE_PRIVATE)
         settingsEditor = settings.edit()
@@ -58,7 +67,7 @@ class MainActivity : AppCompatActivity() {
         weather = GetWeather()
         weatherNow = GetWeatherNow()
 
-        initialize()
+
 
         unit()
 
@@ -115,6 +124,28 @@ class MainActivity : AppCompatActivity() {
                 "${weatherList.dailyForecasts[2].temperature.maximum.value.toInt()}/${weatherList.dailyForecasts[2].temperature.minimum.value.toInt()}${getString(R.string.F)}"
             typeWeather2day.text = weatherList.dailyForecasts[2].day.iconPhrase
 
+        }
+    }
+
+    private fun checkTime(){
+        var hours = timeNow.hours
+        when(hours){
+            in 0..6 -> {
+                mainLayout.background = getDrawable(R.drawable.sunny_night_gradient)
+                isDay = false
+            }
+            in 6..12 -> {
+                mainLayout.background = getDrawable(R.drawable.sunny_morning_gradient)
+                isDay = true
+            }
+            in 12..18 -> {
+                mainLayout.background = getDrawable(R.drawable.sunny_day_gradient)
+                isDay = true
+            }
+            in 18..24 -> {
+                mainLayout.background = getDrawable(R.drawable.sunny_evening_gradient)
+                isDay = false
+            }
         }
     }
 
@@ -201,6 +232,13 @@ class MainActivity : AppCompatActivity() {
         temp2day = findViewById(R.id.temperature2day)
         icon2day = findViewById(R.id.icon2day)
         day2 = findViewById(R.id.to2day)
+
+        mainLayout = findViewById(R.id.main_layout)
+        timeNow = Calendar.getInstance().time
+    }
+
+    private fun setImages(){
+        
     }
 }
 
