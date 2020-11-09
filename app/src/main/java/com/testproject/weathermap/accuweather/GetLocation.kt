@@ -10,7 +10,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Query
 
-val API_KEY: String = "LtiDJLfksJGtFALGtUfSHa6mAc6SlWVO"
+val API_KEY: String = "PFNGW8awukozsQmM26Wnrb0hTYPjac15"
 
 //http://dataservice.accuweather.com/locations/v1/cities/autocomplete?apikey=2BTsJdolWwgqSyCIshzvvrfnyHz31v76&q=minsk
 

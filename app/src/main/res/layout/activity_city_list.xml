@@ -6,6 +6,27 @@
     android:layout_height="match_parent"
     tools:context=".CityList">
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:indeterminate="true" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/text_loading"
+        android:text="@string/loading"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        android:layout_margin="8dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/progressBar"/>
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id='@+id/searchBtn'
@@ -17,7 +38,8 @@
         android:layout_alignParentEnd="true"
         android:layout_margin="5dp"
         app:fabSize="normal"
-        android:focusable="true" />
+        android:focusable="true"
+        android:contentDescription="Search" />
     <com.google.android.material.textfield.TextInputLayout
         android:id ="@+id/text_layout"
         android:layout_width="match_parent"

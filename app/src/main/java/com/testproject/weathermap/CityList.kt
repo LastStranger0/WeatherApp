@@ -3,6 +3,8 @@ package com.testproject.weathermap
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -15,31 +17,28 @@ import kotlinx.coroutines.launch
 import java.io.IOException
 
 class CityList : AppCompatActivity(), CityAdapter.OnCityListener {
-    val TAG: String = "work"
-    lateinit var recyclerView: RecyclerView
-    lateinit var city: ArrayList<City>
-    lateinit var text: TextInputEditText
-    lateinit var searchBtn: FloatingActionButton
-    lateinit var searchText: String
-    lateinit var cityAdapter: CityAdapter
-    lateinit var location: GetLocation
-    lateinit var locationList: Locate
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var city: ArrayList<City>
+    private lateinit var text: TextInputEditText
+    private lateinit var searchBtn: FloatingActionButton
+    private lateinit var searchText: String
+    private lateinit var cityAdapter: CityAdapter
+    private lateinit var location: GetLocation
+    private lateinit var locationList: Locate
+    private lateinit var progressBar: ProgressBar
+    private lateinit var textProgress: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_city_list)
-        city = arrayListOf()
-        recyclerView = findViewById(R.id.search_list)
-        text = findViewById(R.id.messageField)
-        searchBtn = findViewById(R.id.searchBtn)
-        location = GetLocation()
-        cityAdapter = CityAdapter(this, city, this)
-        recyclerView.adapter = cityAdapter
+        initialize()
         searchBtn.setOnClickListener(View.OnClickListener {
             searchText = text.text.toString()
             if(isOnline()){
                 GlobalScope.launch(Dispatchers.Main) {
                     locationList = location.getLocation(searchText).await()
+                    progressBar.visibility = View.INVISIBLE
+                    textProgress.visibility = View.INVISIBLE
                     for (i in 0 until locationList.size){
                         city.add(i, City(locationList[i].localizedName,
                                 locationList[i].country.localizedName,
@@ -50,6 +49,18 @@ class CityList : AppCompatActivity(), CityAdapter.OnCityListener {
                 }
             }
         })
+    }
+
+    private fun initialize(){
+        city = arrayListOf()
+        recyclerView = findViewById(R.id.search_list)
+        text = findViewById(R.id.messageField)
+        searchBtn = findViewById(R.id.searchBtn)
+        location = GetLocation()
+        cityAdapter = CityAdapter(this, city, this)
+        recyclerView.adapter = cityAdapter
+        progressBar = findViewById(R.id.progressBar)
+        textProgress = findViewById(R.id.text_loading)
     }
 
     fun isOnline(): Boolean {

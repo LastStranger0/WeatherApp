@@ -5,6 +5,8 @@
     android:id="@+id/main_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fitsSystemWindows = "true"
+    android:clipToPadding = "false"
     android:background="@drawable/sunny_day_gradient">
     <!--
     <ImageView
@@ -104,18 +106,6 @@
                     android:layout_weight="1"
                     android:orientation="horizontal">
 
-                    <ImageView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.5"
-                        android:contentDescription="@string/temperature"
-                        android:paddingStart="20dp"
-                        android:paddingTop="20dp"
-                        android:paddingEnd="5dp"
-                        android:paddingBottom="20dp"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/ic_thermometer" />
-
                     <TextView
                         android:id="@+id/temperature"
                         android:layout_width="0dp"
@@ -211,6 +201,7 @@
                     android:fontFamily="sans-serif-light"
                     android:gravity="center|end"
                     android:maxLines="1"
+
                     android:text="@string/c"
                     android:textColor="@color/white"
                     android:textSize="35sp"
