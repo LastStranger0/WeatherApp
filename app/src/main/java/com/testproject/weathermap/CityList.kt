@@ -32,7 +32,10 @@ class CityList : AppCompatActivity(), CityAdapter.OnCityListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_city_list)
         initialize()
+
         searchBtn.setOnClickListener(View.OnClickListener {
+            progressBar.visibility = View.VISIBLE
+            textProgress.visibility = View.VISIBLE
             searchText = text.text.toString()
             if(isOnline()){
                 GlobalScope.launch(Dispatchers.Main) {

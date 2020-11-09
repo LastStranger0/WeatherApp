@@ -1,5 +1,6 @@
 package com.testproject.weathermap
 
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -8,7 +9,9 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
+import com.bumptech.glide.Glide
 import com.testproject.weathermap.accuweather.GetWeather
 import com.testproject.weathermap.openweathermap.GetWeatherNow
 import kotlinx.coroutines.Dispatchers
@@ -74,7 +77,7 @@ class MainActivity : AppCompatActivity() {
         if(cityName != "city"){
             city.text = cityName
             if(isOnline()) {
-                setValues(weatherNow, weather)
+                setValues(weatherNow, weather, this)
             }
         }
 
@@ -88,12 +91,12 @@ class MainActivity : AppCompatActivity() {
         key = settings.getString("key", "city").toString()
         cityName = settings.getString("name", "city").toString()
         if(cityName != "city"){
-            setValues(weatherNow, weather)
+            setValues(weatherNow, weather, this)
         }
     }
 
 
-    private fun setValues(weatherNow: GetWeatherNow, weather: GetWeather){
+    private fun setValues(weatherNow: GetWeatherNow, weather: GetWeather, context: Context){
         GlobalScope.launch(Dispatchers.Main) {
             val weatherAtNow = if (metric)
                 weatherNow.getWeather(cityName, "metric").await()
@@ -123,13 +126,21 @@ class MainActivity : AppCompatActivity() {
             else
                 "${weatherList.dailyForecasts[2].temperature.maximum.value.toInt()}/${weatherList.dailyForecasts[2].temperature.minimum.value.toInt()}${getString(R.string.F)}"
             typeWeather2day.text = weatherList.dailyForecasts[2].day.iconPhrase
+            setImages(context, iconToday,weatherList.dailyForecasts[0].day.icon)
+            setImages(context, iconTomorrow,weatherList.dailyForecasts[1].day.icon)
+            setImages(context, icon2day,weatherList.dailyForecasts[2].day.icon)
+            if(isDay) {
+                setImages(context, icon,weatherList.dailyForecasts[0].day.icon)
+            }
+            else {
+                setImages(context, icon,weatherList.dailyForecasts[0].night.icon)
+            }
 
         }
     }
 
     private fun checkTime(){
-        var hours = timeNow.hours
-        when(hours){
+        when(timeNow.hours){
             in 0..6 -> {
                 mainLayout.background = getDrawable(R.drawable.sunny_night_gradient)
                 isDay = false
@@ -192,7 +203,7 @@ class MainActivity : AppCompatActivity() {
         unit()
         if(cityName != "city"){
             city.text = cityName
-            setValues(weatherNow, weather)
+            setValues(weatherNow, weather, this)
 
         }
     }
@@ -237,8 +248,17 @@ class MainActivity : AppCompatActivity() {
         timeNow = Calendar.getInstance().time
     }
 
-    private fun setImages(){
-        
+    private fun setImages(context: Context, image: ImageView, id: Int){
+        if (id <10){
+        Glide.with(context)
+                .load("https://developer.accuweather.com/sites/default/files/0$id-s.png")
+                .into(image)
+        }
+        else{
+            Glide.with(context)
+                    .load("https://developer.accuweather.com/sites/default/files/$id-s.png")
+                    .into(image)
+        }
     }
 }
 
