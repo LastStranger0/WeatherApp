@@ -9,43 +9,41 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
 import com.testproject.weathermap.accuweather.GetWeather
-import com.testproject.weathermap.accuweather.Weather.Weather5day
 import com.testproject.weathermap.openweathermap.GetWeatherNow
-import com.testproject.weathermap.openweathermap.weather.WeatherNow
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
-    lateinit var settings: SharedPreferences
-    lateinit var settingsEditor: SharedPreferences.Editor
+    private lateinit var settings: SharedPreferences
+    private lateinit var settingsEditor: SharedPreferences.Editor
 
-    var key: String = "city"
-    var cityName: String = "city" //if cityName = "city", nothing don't work
-    var OK = 1
+    private var key: String = "city"
+    private var cityName: String = "city" //if cityName = "city", nothing don't work
+    private var ok = 1
 
-    lateinit var weather: GetWeather
-    lateinit var weatherNow: GetWeatherNow
-    var metric = true
+    private lateinit var weather: GetWeather
+    private lateinit var weatherNow: GetWeatherNow
+    private var metric = true
 
-    lateinit var city: TextView
-    lateinit var temperature: TextView
-    lateinit var typeWeather: TextView
-    lateinit var icon: ImageView
+    private lateinit var city: TextView
+    private lateinit var temperature: TextView
+    private lateinit var typeWeather: TextView
+    private lateinit var icon: ImageView
 
-    lateinit var typeWeatherToday: TextView
-    lateinit var tempToday: TextView
-    lateinit var iconToday: ImageView
+    private lateinit var typeWeatherToday: TextView
+    private lateinit var tempToday: TextView
+    private lateinit var iconToday: ImageView
 
-    lateinit var typeWeatherTomorrow: TextView
-    lateinit var tempTomorrow: TextView
-    lateinit var iconTomorrow: ImageView
+    private lateinit var typeWeatherTomorrow: TextView
+    private lateinit var tempTomorrow: TextView
+    private lateinit var iconTomorrow: ImageView
 
-    lateinit var typeWeather2day: TextView
-    lateinit var temp2day: TextView
-    lateinit var icon2day: ImageView
-    lateinit var day2: TextView
+    private lateinit var typeWeather2day: TextView
+    private lateinit var temp2day: TextView
+    private lateinit var icon2day: ImageView
+    private lateinit var day2: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,29 +58,13 @@ class MainActivity : AppCompatActivity() {
         weather = GetWeather()
         weatherNow = GetWeatherNow()
 
-        temperature = findViewById(R.id.temperature)
-        city = findViewById(R.id.cityName)
-        typeWeather = findViewById(R.id.typeOfWeather)
-        icon = findViewById(R.id.weatherIcon)
+        initialize()
 
-        typeWeatherToday = findViewById(R.id.typeToday)
-        tempToday = findViewById(R.id.temperatureToday)
-        iconToday = findViewById(R.id.iconToday)
-
-        typeWeatherTomorrow = findViewById(R.id.typeTomorrow)
-        tempTomorrow = findViewById(R.id.temperatureTomorrow)
-        iconTomorrow = findViewById(R.id.iconTomorrow)
-
-        typeWeather2day = findViewById(R.id.type2day)
-        temp2day = findViewById(R.id.temperature2day)
-        icon2day = findViewById(R.id.icon2day)
-        day2 = findViewById(R.id.to2day)
         unit()
 
         if(cityName != "city"){
             city.text = cityName
             if(isOnline()) {
-
                 setValues(weatherNow, weather)
             }
         }
@@ -96,13 +78,13 @@ class MainActivity : AppCompatActivity() {
         unit()
         key = settings.getString("key", "city").toString()
         cityName = settings.getString("name", "city").toString()
-        if(!cityName.equals("city")){
+        if(cityName != "city"){
             setValues(weatherNow, weather)
         }
     }
 
 
-    fun setValues(weatherNow: GetWeatherNow, weather5day: GetWeather){
+    private fun setValues(weatherNow: GetWeatherNow, weather: GetWeather){
         GlobalScope.launch(Dispatchers.Main) {
             val weatherAtNow = if (metric)
                 weatherNow.getWeather(cityName, "metric").await()
@@ -136,13 +118,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun toCityList() {
+    fun toCityList(view: View) {
         intent = Intent(this, CityList::class.java)
-        startActivityForResult(intent, OK)
+        startActivityForResult(intent, ok)
 
     }
 
-    fun isOnline(): Boolean {
+    private fun isOnline(): Boolean {
         val runtime = Runtime.getRuntime()
         try {
             val ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8")
@@ -177,20 +159,20 @@ class MainActivity : AppCompatActivity() {
         temperature = findViewById(R.id.temperature)
         city = findViewById(R.id.cityName)
         unit()
-        if(!cityName.equals("city")){
+        if(cityName != "city"){
             city.text = cityName
             setValues(weatherNow, weather)
 
         }
     }
 
-    fun toSettings(){
+    fun toSettings(view: View){
         intent = Intent(this, Settings::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         startActivity(intent)
     }
 
-    fun unit(){
+    private fun unit(){
         val pref = PreferenceManager.getDefaultSharedPreferences(this)
         val unit = pref.getString(getString(R.string.iom), "")
         if (unit != null) {
@@ -201,12 +183,30 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun initialize() {
+        temperature = findViewById(R.id.temperature)
+        city = findViewById(R.id.cityName)
+        typeWeather = findViewById(R.id.typeOfWeather)
+        icon = findViewById(R.id.weatherIcon)
+
+        typeWeatherToday = findViewById(R.id.typeToday)
+        tempToday = findViewById(R.id.temperatureToday)
+        iconToday = findViewById(R.id.iconToday)
+
+        typeWeatherTomorrow = findViewById(R.id.typeTomorrow)
+        tempTomorrow = findViewById(R.id.temperatureTomorrow)
+        iconTomorrow = findViewById(R.id.iconTomorrow)
+
+        typeWeather2day = findViewById(R.id.type2day)
+        temp2day = findViewById(R.id.temperature2day)
+        icon2day = findViewById(R.id.icon2day)
+        day2 = findViewById(R.id.to2day)
+    }
 }
 
 
 /*
-* TODO: а дальше пофикси то, что работало
-*  потом сделай так, чтобы картинки обновлялись, а под конец реализуй хрень с днями недели
+* TODO: потом сделай так, чтобы картинки обновлялись, а под конец реализуй хрень с днями недели
 *  и различной погодой с различными background
 *  а под конец реализуй фичу с поиском по gps*/
 
